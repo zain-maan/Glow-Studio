@@ -1,0 +1,248 @@
+@import 'tailwindcss';
+
+/* Porcelain-blush base, deep plum for contrast, and a peach → rose → orchid "glow" gradient. */
+@theme {
+  --color-porcelain: #fbf5f2;
+  --color-blush: #f7e4de;
+  --color-petal: #f1d0cb;
+  --color-line: #ecdcd6;
+  --color-ink: #1f1420;
+  --color-muted: #7b6874;
+  --color-plum: #2b1330;
+  --color-plum-2: #43204b;
+  --color-peach: #ffb199;
+  --color-rose: #ff6f91;
+  --color-orchid: #c86dd7;
+  --color-gold: #d9a86c;
+  --color-mint: #3fb68b;
+  --font-display: 'Instrument Serif', Georgia, serif;
+  --font-sans: 'Manrope', system-ui, sans-serif;
+  --animate-marquee: marquee 32s linear infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-spin-slow: spin 18s linear infinite;
+  --animate-blob: blob 16s ease-in-out infinite alternate;
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes float {
+    50% {
+      transform: translateY(-12px);
+    }
+  }
+  @keyframes blob {
+    0% {
+      transform: translate(0, 0) scale(1);
+    }
+    50% {
+      transform: translate(8%, -6%) scale(1.15);
+    }
+    100% {
+      transform: translate(-6%, 8%) scale(0.95);
+    }
+  }
+}
+
+html {
+  background: var(--color-porcelain);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--color-rose);
+  color: white;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-rose);
+  outline-offset: 3px;
+}
+
+@layer components {
+  .text-glow {
+    background: linear-gradient(100deg, var(--color-peach), var(--color-rose) 45%, var(--color-orchid));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--color-rose);
+  }
+  .eyebrow::before {
+    content: '';
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: linear-gradient(115deg, var(--color-peach), var(--color-rose), var(--color-orchid));
+  }
+
+  .btn {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 999px;
+    padding: 0.85rem 1.6rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: color 0.35s, transform 0.2s, opacity 0.2s, box-shadow 0.35s, background-color 0.35s;
+  }
+  .btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    transform: translateY(101%);
+    transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  .btn:hover:not(:disabled)::after {
+    transform: translateY(0);
+  }
+  .btn:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+  .btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .btn-glow {
+    background: linear-gradient(115deg, var(--color-peach), var(--color-rose) 50%, var(--color-orchid));
+    color: white;
+    box-shadow: 0 12px 30px -12px rgba(255, 111, 145, 0.75);
+  }
+  .btn-glow::after {
+    background: var(--color-plum);
+  }
+  .btn-dark {
+    background: var(--color-plum);
+    color: white;
+  }
+  .btn-dark::after {
+    background: var(--color-rose);
+  }
+  .btn-light {
+    background: white;
+    color: var(--color-plum);
+  }
+  .btn-light::after {
+    background: var(--color-blush);
+  }
+  .btn-ghost {
+    border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+  }
+  .btn-ghost::after {
+    background: color-mix(in srgb, currentColor 10%, transparent);
+  }
+
+  .card {
+    border-radius: 1.5rem;
+    background: white;
+    box-shadow: 0 1px 0 rgba(43, 19, 48, 0.04), 0 18px 40px -28px rgba(43, 19, 48, 0.35);
+  }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(14px) saturate(1.4);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+  }
+
+  .field {
+    width: 100%;
+    border-radius: 0.9rem;
+    border: 1px solid var(--color-line);
+    background: white;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .field:focus {
+    outline: none;
+    border-color: var(--color-rose);
+    box-shadow: 0 0 0 4px rgba(255, 111, 145, 0.15);
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-radius: 999px;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1px solid var(--color-line);
+    background: white;
+    transition: all 0.25s;
+  }
+  .chip:hover {
+    border-color: var(--color-rose);
+  }
+  .chip[aria-pressed='true'],
+  .chip[aria-checked='true'],
+  .chip[aria-selected='true'] {
+    background: var(--color-plum);
+    border-color: var(--color-plum);
+    color: white;
+  }
+
+  /* Backgrounds last, so they win over .card and friends. */
+  .bg-glow {
+    background: linear-gradient(115deg, var(--color-peach), var(--color-rose) 50%, var(--color-orchid));
+  }
+
+  .bg-plum-glow {
+    background:
+      radial-gradient(55% 70% at 90% 0%, rgba(200, 109, 215, 0.35), transparent 70%),
+      radial-gradient(45% 60% at 0% 100%, rgba(255, 111, 145, 0.25), transparent 70%),
+      var(--color-plum);
+  }
+}
+
+/* Masked line wrappers created by SplitText. */
+.split-line {
+  padding-bottom: 0.1em;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
