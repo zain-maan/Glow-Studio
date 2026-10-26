@@ -158,7 +158,7 @@ export default function Home() {
 
           <div className="relative mx-auto w-full max-w-[20rem] sm:max-w-md lg:max-w-none">
             {/* 3D glow bubble behind the arch (WebGL, loads after the page) */}
-            <GlowBubble className="absolute -right-[30%] -top-[18%] h-[85%] w-[110%] sm:-right-[25%]" />
+            <GlowBubble className="absolute -right-[2%] -top-[7%] aspect-square w-[58%] sm:-right-[6%] sm:w-[52%]" />
             <div data-depth="18" className="relative mx-auto w-[78%]">
               <div data-hero-arch className="aspect-[3/4] overflow-hidden rounded-t-full rounded-b-[2.5rem] shadow-[0_40px_80px_-40px_rgba(43,19,48,0.6)]">
                 <Img name="hero" priority sizes="(min-width: 1024px) 35vw, 75vw" alt="Stylist finishing glossy, wavy hair" className="h-full w-full object-cover" />

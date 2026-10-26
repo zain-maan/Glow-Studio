@@ -66,10 +66,10 @@ export default function GlowBubble({ className = '' }: { className?: string }) {
       const env = pmrem.fromScene(new T.RoomEnvironment(), 0.04).texture
       scene.environment = env
 
-      const uniforms = { uTime: { value: 0 }, uAmp: { value: 0.22 } }
+      const uniforms = { uTime: { value: 0 }, uAmp: { value: 0.15 } }
       const material = new T.MeshPhysicalMaterial({
-        color: new T.Color('#ffd6e2'),
-        roughness: 0.12,
+        color: new T.Color('#ff9fbf'),
+        roughness: 0.18,
         metalness: 0.05,
         clearcoat: 1,
         clearcoatRoughness: 0.08,
@@ -78,7 +78,7 @@ export default function GlowBubble({ className = '' }: { className?: string }) {
         iridescenceThicknessRange: [180, 820],
         sheen: 1,
         sheenColor: new T.Color('#ff9ec4'),
-        envMapIntensity: 1.2,
+        envMapIntensity: 0.7,
       })
       // Push each vertex in and out along its normal with flowing noise.
       material.onBeforeCompile = (shader) => {
@@ -90,7 +90,7 @@ export default function GlowBubble({ className = '' }: { className?: string }) {
             '#include <begin_vertex>',
             `#include <begin_vertex>
              float n = snoise(position * 1.25 + vec3(uTime * 0.28));
-             float n2 = snoise(position * 2.6 - vec3(uTime * 0.18)) * 0.35;
+             float n2 = snoise(position * 2.6 - vec3(uTime * 0.18)) * 0.2;
              transformed += normal * (n + n2) * uAmp;`,
           )
       }
@@ -102,7 +102,7 @@ export default function GlowBubble({ className = '' }: { className?: string }) {
         { colour: '#ff6f91', pos: [-3, -1.5, 2.5] },
         { colour: '#c86dd7', pos: [0.5, -3, 2] },
       ].map(({ colour, pos }) => {
-        const l = new T.PointLight(colour, 18, 14)
+        const l = new T.PointLight(colour, 11, 14)
         l.position.set(pos[0], pos[1], pos[2])
         scene.add(l)
         return l
