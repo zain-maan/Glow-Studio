@@ -25,6 +25,24 @@ export function startSmoothScroll() {
   }
 }
 
+// Elements marked data-skew lean with the speed of the scroll and settle back when it stops.
+// Desktop only: on phones it costs smoothness for little gain.
+export function startVelocitySkew() {
+  if (prefersReducedMotion() || !window.matchMedia('(pointer: fine)').matches) return () => {}
+  const proxy = { skew: 0 }
+  const apply = () => gsap.set('[data-skew]', { skewY: proxy.skew, force3D: true })
+  const st = ScrollTrigger.create({
+    onUpdate: (self) => {
+      const skew = gsap.utils.clamp(-5, 5, self.getVelocity() / -400)
+      if (Math.abs(skew) > Math.abs(proxy.skew)) {
+        proxy.skew = skew
+        gsap.to(proxy, { skew: 0, duration: 0.8, ease: 'power3', overwrite: true, onUpdate: apply })
+      }
+    },
+  })
+  return () => st.kill()
+}
+
 export function scrollToTop() {
   // `force` makes Lenis jump even while a previous smooth scroll is still running.
   lenis?.scrollTo(0, { immediate: true, force: true })

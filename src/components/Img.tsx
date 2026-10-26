@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import lqip from '../lqip.json'
 import { PORTRAITS, type ImageName } from '../data'
 
@@ -14,26 +14,50 @@ type Props = {
 
 const PREVIEWS = lqip as Partial<Record<ImageName, string>>
 
-// Serves the locally optimised WebP photos at the right size for the screen, with a tiny
-// blurred preview painted underneath so the space is never empty while the photo loads.
+export const imageWidths = (name: ImageName) => ((PORTRAITS as readonly string[]).includes(name) ? [480, 800] : [480, 960, 1280])
+
+export const imageSrc = (name: ImageName, width: number, format: 'avif' | 'webp' = 'webp') => `/images/${name}-${width}.${format}`
+
+const srcSet = (name: ImageName, format: 'avif' | 'webp') =>
+  imageWidths(name)
+    .map((w) => `${imageSrc(name, w, format)} ${w}w`)
+    .join(', ')
+
+// Local photos as AVIF (smallest) with a WebP fallback, at the size the screen needs.
+// A tiny blurred preview shows instantly, and the real photo sharpens in once it arrives.
 export default function Img({ name, alt = '', sizes = '(min-width: 1024px) 50vw, 100vw', className, style, priority, ...rest }: Props) {
-  const [small, large] = (PORTRAITS as readonly string[]).includes(name) ? [400, 800] : [640, 1280]
+  const img = useRef<HTMLImageElement>(null)
+  const [loaded, setLoaded] = useState(false)
   const preview = PREVIEWS[name]
+  const widths = imageWidths(name)
+
+  // A cached image can finish before React attaches onLoad.
+  useEffect(() => {
+    if (img.current?.complete && img.current.naturalWidth) setLoaded(true)
+  }, [name])
+
   return (
-    <img
-      src={`/images/${name}-${large}.webp`}
-      srcSet={`/images/${name}-${small}.webp ${small}w, /images/${name}-${large}.webp ${large}w`}
-      sizes={sizes}
-      alt={alt}
-      loading={priority ? 'eager' : 'lazy'}
-      fetchPriority={priority ? 'high' : undefined}
-      decoding="async"
-      className={className}
-      style={{
-        ...(preview && { backgroundImage: `url(${preview})`, backgroundSize: 'cover', backgroundPosition: 'center' }),
-        ...style,
-      }}
-      {...rest}
-    />
+    <picture style={{ display: 'contents' }}>
+      <source type="image/avif" srcSet={srcSet(name, 'avif')} sizes={sizes} />
+      <img
+        ref={img}
+        src={imageSrc(name, widths[1])}
+        srcSet={srcSet(name, 'webp')}
+        sizes={sizes}
+        alt={alt}
+        loading={priority ? 'eager' : 'lazy'}
+        fetchPriority={priority ? 'high' : undefined}
+        decoding="async"
+        onLoad={() => setLoaded(true)}
+        className={className}
+        style={{
+          ...(preview && { backgroundImage: `url(${preview})`, backgroundSize: 'cover', backgroundPosition: 'center' }),
+          filter: loaded ? 'none' : 'blur(14px) saturate(1.2)',
+          transition: 'filter 0.8s ease-out',
+          ...style,
+        }}
+        {...rest}
+      />
+    </picture>
   )
 }

@@ -30,11 +30,11 @@ Most salons still take bookings over WhatsApp and phone calls. Clients wait for 
 
 ## Design and motion
 
-Blush, plum and a peach → rose → orchid "glow" gradient, Instrument Serif with Manrope. Branded intro, page-transition curtain, line-by-line headings (GSAP SplitText), rotating hero word, arch photo reveals, pointer parallax, expanding category panels, a hover photo that follows the cursor over the price list, an endless marquee, animated charts and count-ups. Respects reduced motion, works on phones (bottom tab bar in the dashboard).
+Blush, plum and a peach → rose → orchid "glow" gradient, Instrument Serif with Manrope. Branded intro, page-transition curtain, line-by-line headings (GSAP SplitText), rotating hero word, arch photo reveals, pointer parallax, expanding category panels, a hover photo that follows the cursor over the price list, an endless marquee, cards that lean with scroll speed, animated charts and count-ups. Also: a **3D iridescent "glow" bubble** in the hero (Three.js, morphing with simplex noise), **treatment tags that drop into a pile** with real physics (Matter.js; drag them on desktop, tap to add to the booking), and an **arch that opens to full screen** as you scroll. Respects reduced motion, works on phones (bottom tab bar in the dashboard).
 
 ## Tech stack
 
-React 19 · TypeScript · Vite · Tailwind CSS v4 · GSAP (ScrollTrigger, SplitText) · Lenis · React Router · hand-built SVG charts · Vercel
+React 19 · TypeScript · Vite · Tailwind CSS v4 · GSAP (ScrollTrigger, SplitText) · Three.js · Matter.js · Lenis · React Router · hand-built SVG charts · Vercel
 
 Data runs in **demo mode**: the database (2 months of seeded history, ~220 clients) lives in the browser's localStorage so anyone can try the full system without a backend. The store is a single module (`src/lib/store.ts`), ready to be backed by Supabase.
 
@@ -45,7 +45,7 @@ npm install
 npm run dev
 ```
 
-`npm run build` creates the production build. `node scripts/fetch-images.mjs` re-downloads the optimised photos.
+`npm run build` creates the production build. `node scripts/fetch-images.mjs` re-downloads the photos and `python scripts/optimize-images.py` (Pillow) turns them into AVIF + WebP at each size.
 
 ## Notes
 

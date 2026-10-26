@@ -1,9 +1,12 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import CoverReveal from '../components/CoverReveal'
 import Faq from '../components/Faq'
+import GlowBubble from '../components/GlowBubble'
 import { ArrowRight, Calendar, Check, Heart, Scissors, Sparkles, Star } from '../components/icons'
 import Img from '../components/Img'
 import Marquee from '../components/Marquee'
+import ServiceDrop from '../components/ServiceDrop'
 import ServiceMenu from '../components/ServiceMenu'
 import { CATEGORIES, PACKAGES, SERVICES, STAFF, TESTIMONIALS, serviceById, staffById } from '../data'
 import { useReveal } from '../hooks/useReveal'
@@ -154,6 +157,8 @@ export default function Home() {
           </div>
 
           <div className="relative mx-auto w-full max-w-[20rem] sm:max-w-md lg:max-w-none">
+            {/* 3D glow bubble behind the arch (WebGL, loads after the page) */}
+            <GlowBubble className="absolute -right-[30%] -top-[18%] h-[85%] w-[110%] sm:-right-[25%]" />
             <div data-depth="18" className="relative mx-auto w-[78%]">
               <div data-hero-arch className="aspect-[3/4] overflow-hidden rounded-t-full rounded-b-[2.5rem] shadow-[0_40px_80px_-40px_rgba(43,19,48,0.6)]">
                 <Img name="hero" priority sizes="(min-width: 1024px) 35vw, 75vw" alt="Stylist finishing glossy, wavy hair" className="h-full w-full object-cover" />
@@ -268,6 +273,17 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Pick and mix: physics tags */}
+      <section className="mx-auto max-w-7xl px-4 pt-16 sm:px-6 sm:pt-24 lg:pt-32">
+        <div className="mb-8 max-w-2xl">
+          <p className="eyebrow" data-reveal>Pick and mix</p>
+          <h2 data-split className="mt-4 font-display text-[2.6rem] leading-[1.02] sm:text-6xl">
+            Build your <em className="text-glow">glow day.</em>
+          </h2>
+        </div>
+        <ServiceDrop />
+      </section>
+
       {/* Price list */}
       <section className="mx-auto grid max-w-7xl gap-12 px-4 py-24 sm:px-6 lg:grid-cols-[1fr_1.6fr] lg:py-32">
         <div className="min-w-0 lg:sticky lg:top-32 lg:self-start">
@@ -303,7 +319,7 @@ export default function Home() {
           </div>
           <div className="no-scrollbar -mx-4 mt-12 flex snap-x gap-5 overflow-x-auto px-4 pb-4 lg:mx-0 lg:grid lg:grid-cols-5 lg:overflow-visible lg:px-0">
             {STAFF.map((s, i) => (
-              <Link key={s.id} to={`/book?staff=${s.id}`} data-reveal={i * 0.08} className="group w-60 shrink-0 snap-start lg:w-auto">
+              <Link key={s.id} to={`/book?staff=${s.id}`} data-reveal={i * 0.08} data-skew className="group w-60 shrink-0 snap-start lg:w-auto">
                 <div className="relative overflow-hidden rounded-t-full rounded-b-[2rem]">
                   <Img name={s.image} sizes="(min-width: 1024px) 18vw, 240px" className="aspect-[3/4] w-full object-cover transition-transform duration-700 group-hover:scale-110" />
                   <span className="absolute inset-0 bg-gradient-to-t from-plum/80 via-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
@@ -322,6 +338,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <CoverReveal />
 
       {/* Packages */}
       <section id="packages" className="mx-auto max-w-7xl scroll-mt-24 px-4 py-24 sm:px-6 lg:py-32">

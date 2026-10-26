@@ -45,18 +45,40 @@ export default function Curtain() {
       holdForIntro(INTRO_MS)
       setScrollLocked(true)
       const counter = { v: 0 }
-      const tl = gsap.timeline({ onComplete: () => setScrollLocked(false) })
+      const show = () => count.current && (count.current.textContent = String(Math.round(counter.v)))
       gsap.set(el, { display: 'flex', yPercent: 0, borderRadius: 0 })
       gsap.set('[data-intro-content]', { opacity: 1, yPercent: 0 })
-      tl.fromTo('[data-intro-letter]', { yPercent: 120 }, { yPercent: 0, duration: 0.9, stagger: 0.05, ease: 'power4.out' })
-        .to(counter, { v: 100, duration: 1.3, ease: 'power2.inOut', onUpdate: () => count.current && (count.current.textContent = String(Math.round(counter.v))) }, 0.1)
-        .fromTo('[data-intro-bar]', { scaleX: 0 }, { scaleX: 1, duration: 1.3, ease: 'power2.inOut' }, 0.1)
-        .to('[data-intro-content]', { yPercent: -40, opacity: 0, duration: 0.6, ease: 'power3.in' }, 1.45)
-        .to(el, { yPercent: -100, duration: 1, ease: 'expo.inOut' }, 1.55)
-        .to(el, { borderBottomLeftRadius: '50% 12vh', borderBottomRightRadius: '50% 12vh', duration: 0.5, ease: 'power2.in' }, 1.55)
-        .set(el, { display: 'none' })
+      gsap.set('[data-intro-bar]', { scaleX: 0 })
+      // Count to 85% while the hero photo downloads, then finish only once it's ready (or after a
+      // short timeout on slow connections), so the curtain never lifts onto a blank hero.
+      const loading = gsap.timeline()
+      loading
+        .fromTo('[data-intro-letter]', { yPercent: 120 }, { yPercent: 0, duration: 0.9, stagger: 0.05, ease: 'power4.out' })
+        .to(counter, { v: 85, duration: 1.1, ease: 'power2.out', onUpdate: show }, 0.1)
+        .to('[data-intro-bar]', { scaleX: 0.85, duration: 1.1, ease: 'power2.out' }, 0.1)
+      let finish: gsap.core.Timeline | null = null
+      let done = false
+      const lift = () => {
+        if (done) return
+        done = true
+        finish = gsap.timeline({ delay: Math.max(0, 1.2 - loading.time()), onComplete: () => setScrollLocked(false) })
+        finish
+          .to(counter, { v: 100, duration: 0.35, ease: 'power1.out', onUpdate: show })
+          .to('[data-intro-bar]', { scaleX: 1, duration: 0.35 }, 0)
+          .to('[data-intro-content]', { yPercent: -40, opacity: 0, duration: 0.6, ease: 'power3.in' }, 0.3)
+          .to(el, { yPercent: -100, duration: 1, ease: 'expo.inOut' }, 0.4)
+          .to(el, { borderBottomLeftRadius: '50% 12vh', borderBottomRightRadius: '50% 12vh', duration: 0.5, ease: 'power2.in' }, 0.4)
+          .set(el, { display: 'none' })
+      }
+      const hero = document.querySelector<HTMLImageElement>('[data-hero-arch] img')
+      if (!hero || (hero.complete && hero.naturalWidth)) lift()
+      else hero.addEventListener('load', lift, { once: true })
+      const timeout = window.setTimeout(lift, 2500)
       return () => {
-        tl.kill()
+        window.clearTimeout(timeout)
+        hero?.removeEventListener('load', lift)
+        loading.kill()
+        finish?.kill()
         setScrollLocked(false)
       }
     }
